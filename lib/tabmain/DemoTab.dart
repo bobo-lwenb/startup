@@ -51,6 +51,7 @@ import 'package:startup_namer/scroller/SingleChildScrollViewRoute.dart';
 import 'package:startup_namer/scroller/SliverRoute.dart';
 import 'package:startup_namer/selfpainting/CustomPaintRoute.dart';
 import 'package:startup_namer/setting/DemoSetting.dart';
+import 'package:startup_namer/tabmain/MainTab.dart';
 import 'package:startup_namer/textfeild/loggin.dart';
 import 'package:startup_namer/union/DemoLayoutRoute.dart';
 import 'package:startup_namer/union/Flex_Expanded.dart';
@@ -79,6 +80,14 @@ class DemoTabState extends State<DemoTab> {
     print('_MyHomePageState');
     return Scaffold(
       appBar: AppBar(
+        leading: Builder(builder: (context) {
+          return IconButton(
+            icon: Icon(Icons.dehaze, color: Colors.white),
+            onPressed: () {
+              mainTabKey.currentState.openDrawer();
+            },
+          );
+        }),
         title: Text('Demo'),
         actions: <Widget>[
           IconButton(
@@ -234,6 +243,7 @@ class DemoTabState extends State<DemoTab> {
 
   Future<bool> _getState() async {
     SharedPreferences _sp = await SharedPreferences.getInstance();
-    return _sp.getBool('route_state');
+    bool state = _sp.getBool('route_state');
+    return state == null ? false : state;
   }
 }

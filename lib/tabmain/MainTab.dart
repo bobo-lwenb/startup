@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:startup_namer/tabmain/MyDrawer.dart';
 import 'package:startup_namer/tabmain/DemoTab.dart';
 import 'package:startup_namer/tabmain/MineTab.dart';
 
-List pages = <Widget>[DemoTab(), MineTab()];
+final GlobalKey<ScaffoldState> mainTabKey = new GlobalKey<ScaffoldState>();
 
 class MainTab extends StatefulWidget {
   @override
@@ -12,12 +13,44 @@ class MainTab extends StatefulWidget {
 
 class MainTabState extends State<MainTab> {
   int _tabIndex = 0;
-  var _controller = PageController(initialPage: 0);
+  var _controller;
   DateTime _lastPress;
+
+  @override
+  void initState() {
+    _controller = PageController(initialPage: 0);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: mainTabKey,
+      drawer: MyDrawer(),
+      body: WillPopScope(
+        child: PageView(
+          children: <Widget>[
+            DemoTab(),
+            MineTab(),
+          ],
+          controller: _controller,
+          physics: NeverScrollableScrollPhysics(),
+          onPageChanged: (index) {
+            setState(() {
+              _tabIndex = index;
+            });
+          },
+        ),
+        onWillPop: () async {
+          if (_lastPress == null || DateTime.now().difference(_lastPress) > Duration(seconds: 1)) {
+            _lastPress = DateTime.now();
+            Fluttertoast.showToast(msg: 'Press again to exit');
+            return false;
+          } else {
+            return true;
+          }
+        },
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _tabIndex,
         backgroundColor: Colors.white,
@@ -44,24 +77,6 @@ class MainTabState extends State<MainTab> {
             title: Text('Mine'),
           )
         ],
-      ),
-      body: WillPopScope(
-        child: PageView.builder(
-          itemBuilder: (ctx, index) {
-            return pages[index];
-          },
-          controller: _controller,
-          physics: NeverScrollableScrollPhysics(),
-        ),
-        onWillPop: () async {
-          if (_lastPress == null || DateTime.now().difference(_lastPress) > Duration(seconds: 1)) {
-            _lastPress = DateTime.now();
-            Fluttertoast.showToast(msg: 'Press again to exit');
-            return false;
-          } else {
-            return true;
-          }
-        },
       ),
     );
   }

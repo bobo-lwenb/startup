@@ -6,13 +6,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DemoSetting extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => DemoSettingState();
-
 }
 
 class DemoSettingState extends State<DemoSetting> {
-bool _check = false;
+  bool _check = false;
 
-@override
+  @override
   void initState() {
     _getState().then((state) {
       setState(() {
@@ -50,9 +49,9 @@ bool _check = false;
     await _sp.setBool('route_state', state);
   }
 
-  Future<bool>_getState() async {
+  Future<bool> _getState() async {
     SharedPreferences _sp = await SharedPreferences.getInstance();
-    return _sp.getBool('route_state');
+    bool state = _sp.getBool('route_state');
+    return state == null ? false : state;
   }
-
 }
